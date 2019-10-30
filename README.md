@@ -9,4 +9,7 @@ http://docs.ros.org/kinetic/api/moveit_tutorials/html/doc/move_group_python_inte
 
 http://docs.ros.org/kinetic/api/moveit_tutorials/html/doc/pick_place/pick_place_tutorial.html#understanding-moveit-msgs-grasp
 
+NETWORKING
+http://wiki.ros.org/ROS/NetworkSetup
+
 http://wiki.ros.org/ROS/Tutorials/MultipleMachines
