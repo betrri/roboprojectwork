@@ -8,3 +8,5 @@ http://docs.ros.org/kinetic/api/moveit_tutorials/html/doc/quickstart_in_rviz/qui
 http://docs.ros.org/kinetic/api/moveit_tutorials/html/doc/move_group_python_interface/move_group_python_interface_tutorial.html
 
 http://docs.ros.org/kinetic/api/moveit_tutorials/html/doc/pick_place/pick_place_tutorial.html#understanding-moveit-msgs-grasp
+
+http://wiki.ros.org/ROS/Tutorials/MultipleMachines
