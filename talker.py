@@ -86,97 +86,6 @@ class GestureDetector:
         res = cv2.bitwise_and(frame, frame, mask=fgmask)
         return res
     
-    """
-    def open_camera(self):
-        #rospy.loginfo("Opening camera")
-        cap_region_x_begin = 0.5  # start point/total width
-        cap_region_y_end = 0.8  # start point/total width    
-        
-        camera = cv2.VideoCapture(0)  # Change this according to number of attached cameras, 0 = default camera
-        camera.set(10, 200)
-        isBgCaptured = 0
-        bgSubThreshold = 50
-        threshold = 60  # binary threshold
-        blurValue = 41  # GaussianBlur parameter
-        
-        while(True):
-            # Capture frame-by-frame
-            ret, frame = camera.read()
-        
-            cv2.rectangle(frame, (int(cap_region_x_begin * frame.shape[1]), 0), 
-                          (frame.shape[1], int(cap_region_y_end * frame.shape[0])), (255, 0, 0), 2)
-        
-            # Display the resulting frame
-            cv2.imshow('frame',frame)
-            
-            if isBgCaptured == 1:
-                
-                img = self.remove_background(frame)
-                img = img[0:int(cap_region_y_end * frame.shape[0]), 
-                          int(cap_region_x_begin * frame.shape[1]):frame.shape[1]]  # clip the ROI    
-                # convert the image into binary image
-                gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                blur = cv2.GaussianBlur(gray, (blurValue, blurValue), 0)
-                ret, thresh = cv2.threshold(blur, threshold, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-                cv2.imshow('ori', thresh)    
-                
-                thresh1 = copy.deepcopy(thresh)
-                image, contours, hierarchy = cv2.findContours(thresh1, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-                length = len(contours)
-                maxArea = -1
-                if length > 0:
-                    for i in range(length):  # find the biggest contour (according to area)
-                        temp = contours[i]
-                        area = cv2.contourArea(temp)
-                        if area > maxArea:
-                            maxArea = area
-                            ci = i
-        
-                    res = contours[ci]
-                    hull = cv2.convexHull(res)
-                    drawing = np.zeros(img.shape, np.uint8)
-                    cv2.drawContours(drawing, [res], 0, (0, 255, 0), 2)
-                    cv2.drawContours(drawing, [hull], 0, (0, 0, 255), 3)
-        
-                cv2.imshow('output', drawing)
-                
-            
-            k = cv2.waitKey(10)
-            if k == 27:  # press ESC to exit all windows at any time
-                break
-            
-            elif k == ord('b'):  # press 'b' to capture the background
-                self.bgModel = cv2.createBackgroundSubtractorMOG2(0, bgSubThreshold)
-                time.sleep(2)
-                isBgCaptured = 1
-                print('Background captured')
-                
-            elif k == 32:
-                # If space bar pressed
-                cv2.imshow('original', frame)
-                # copies 1 channel BW image to all 3 RGB channels
-                target = np.stack((thresh,) * 3, axis=-1)
-                target = cv2.resize(target, (224, 224))
-                target = target.reshape(1, 224, 224, 3)
-                prediction, score = self.predict_rgb_image_vgg(target)
-        
-    
-                if prediction == 'Palm':
-                    rospy.loginfo("palm")
-                elif prediction == 'Fist':
-                    rospy.loginfo("fist")
-                elif prediction == 'L':
-                    rospy.loginfo("L")
-                elif prediction == 'Okay':
-                    rospy.loginfo("okay")
-                elif prediction == 'Peace':
-                    rospy.loginfo("Peace")
-                else:
-                    pass
-    
-        camera.release()
-        cv2.destroyAllWindows()
-        """
         
     def runDetector(self, pub):                
         
@@ -185,10 +94,14 @@ class GestureDetector:
             if np.shape(frame) == ():  
                 rospy.loginfo("frame is empty")
             else:
-                rospy.loginfo("frame is ok")
+                #rospy.loginfo("frame is ok")
                 cv2.rectangle(frame, (int(self.cap_region_x_begin * frame.shape[1]), 0), 
                           (frame.shape[1], int(self.cap_region_y_end * frame.shape[0])), (255, 0, 0), 2)
-                cv2.imshow("originalWindow", frame)
+                          
+                if self.isBgCaptured == 0:
+                    cv2.imshow("originalWindow", frame)
+                else:
+                    cv2.destroyWindow("originalWindow")
                 
             if self.isBgCaptured == 1:  
                 img = self.remove_background(frame)
@@ -198,6 +111,8 @@ class GestureDetector:
                 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
                 blur = cv2.GaussianBlur(gray, (self.blurValue, self.blurValue), 0)
                 ret, thresh = cv2.threshold(blur, self.threshold, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+         
+                #ori is binary image with backgroud removed
                 cv2.imshow('ori', thresh)    
                 
                 thresh1 = copy.deepcopy(thresh)
@@ -218,7 +133,29 @@ class GestureDetector:
                     drawing = np.zeros(img.shape, np.uint8)
                     cv2.drawContours(drawing, [res], 0, (0, 255, 0), 2)
                     cv2.drawContours(drawing, [hull], 0, (0, 0, 255), 3)
-                    cv2.imshow('output', drawing)
+                    #cv2.imshow('output', drawing)
+                    
+                    
+                target = np.stack((thresh,) * 3, axis=-1)
+                target = cv2.resize(target, (224, 224))
+                target = target.reshape(1, 224, 224, 3)
+                prediction, score = self.predict_rgb_image_vgg(target)
+                #rospy.loginfo("prediction is: " + prediction + " with score: " + str(score))
+                
+                # org 
+                org = (50, 50)     
+                # font 
+                font = cv2.FONT_HERSHEY_SIMPLEX 
+                # Blue color in BGR 
+                color = (255, 0, 0) 
+                # Line thickness of 2 px 
+                thickness = 2
+                
+                thresh = cv2.putText(thresh, prediction, org, font,  
+                   1, color, thickness, cv2.LINE_AA) 
+                #ori is binary image with backgroud removed
+                cv2.imshow('ori', thresh)   
+                
             
             k = cv2.waitKey(10) & 0xFF
             
@@ -237,7 +174,7 @@ class GestureDetector:
             #Make prediction with spacebar
             elif k == 32:
                 # If space bar pressed
-                cv2.imshow('original', frame)
+                #cv2.imshow('original', frame)
                 # copies 1 channel BW image to all 3 RGB channels
                 target = np.stack((thresh,) * 3, axis=-1)
                 target = cv2.resize(target, (224, 224))
@@ -246,19 +183,19 @@ class GestureDetector:
     
                 if prediction == 'Palm':
                     rospy.loginfo("palm " + str(score))
-                    pub.publish("palm " + str(score))
+                    pub.publish("palm")
                 elif prediction == 'Fist':
                     rospy.loginfo("fist " + str(score))
-                    pub.publish("fist " + str(score))
+                    pub.publish("fist")
                 elif prediction == 'L':
                     rospy.loginfo("L " + str(score))
-                    pub.publish("L " + str(score))
+                    pub.publish("L")
                 elif prediction == 'Okay':
-                    rospy.loginfo("okay " + str(score))
+                    rospy.loginfo("okay")
                     pub.publish("Okay " + str(score))
                 elif prediction == 'Peace':
                     rospy.loginfo("Peace " + str(score))
-                    pub.publish("Peace " + str(score))
+                    pub.publish("Peace")
                 else:
                     pass
 
