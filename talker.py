@@ -183,16 +183,16 @@ class GestureDetector:
     
                 if prediction == 'Palm':
                     rospy.loginfo("palm " + str(score))
-                    pub.publish("palm")
+                    pub.publish("Palm")
                 elif prediction == 'Fist':
                     rospy.loginfo("fist " + str(score))
-                    pub.publish("fist")
+                    pub.publish("Fist")
                 elif prediction == 'L':
                     rospy.loginfo("L " + str(score))
                     pub.publish("L")
-                elif prediction == 'Okay':
+                elif prediction == 'Okay':   
                     rospy.loginfo("okay")
-                    pub.publish("Okay " + str(score))
+                    pub.publish("Okay")
                 elif prediction == 'Peace':
                     rospy.loginfo("Peace " + str(score))
                     pub.publish("Peace")
@@ -209,7 +209,7 @@ class GestureDetector:
 def talker():
     #open_camera()
 
-    pub = rospy.Publisher('chatter', String, queue_size=10)
+    pub = rospy.Publisher('gesture_movement/chatter', String, queue_size=10)
     rospy.init_node('talker', anonymous=True)
     rate = rospy.Rate(10) # 10 h z asd
     detector = GestureDetector()
