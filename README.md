@@ -1,15 +1,14 @@
 # roboprojectwork
+Here is brief documentation about the gesture detection project work and how to set up the enviroment
 
-git repository for course Robotics Project Work.
+## Gesture Detection software
 
-Simulating Panda in MoveIT -> Make Panda move in moveit via the gesturedetection script
-http://docs.ros.org/kinetic/api/moveit_tutorials/html/doc/quickstart_in_rviz/quickstart_in_rviz_tutorial.html
+https://github.com/athena15/project_kojak
 
-http://docs.ros.org/kinetic/api/moveit_tutorials/html/doc/move_group_python_interface/move_group_python_interface_tutorial.html
+Repository above was used in order to implement the gesture detection software. Clone the above repository and copy-paste talker.py from under the gesture_detection folder of this repository. The script (talker.py) is built on Python 2.7 and you need to pip install the requirements for the script. Some of the requirements are listed in the project kojak repository but there is some excess requirements aswell (smart home stuff). In addition you must have atleast have http://wiki.ros.org/rospy installed in order to publish signals in the topics.
 
-http://docs.ros.org/kinetic/api/moveit_tutorials/html/doc/pick_place/pick_place_tutorial.html#understanding-moveit-msgs-grasp
+## Franka Emika Panda controller software
 
-NETWORKING
-http://wiki.ros.org/ROS/NetworkSetup
+https://github.com/frankaemika/franka_ros
 
-http://wiki.ros.org/ROS/Tutorials/MultipleMachines
+Above repository was used in creating the software for the Panda controller. 
