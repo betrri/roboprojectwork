@@ -28,3 +28,15 @@ Robot controller is launched by running the custom roslaunch file gesture_moveme
 roslaunch franka_example_controllers gesture_movement.launch. 
 This launch finds the correct ros parameters from the franka_example_controllers.yaml, starts the gesture_movement.cpp controller and starts the rviz visualization.  
 Gesture detection software is started by running the talker.py script. 
+
+## Operating the robot with hand gestures
+
+Once both the robot controller and gesture detection are running the operator may start to operate the robot with hand gestures. This controller uses four gestures to make certain movements with the robot. 
+-	Fist: Moves the robot manipulator to pick-up/place position 1
+-	Peace: Opens the gripper if the gripper is closed and closes the gripper if the gripper is opened. The closing position is hardcoded to grab the example block
+-	L: Moves the robot manipulator to pick-up/place position 2
+-	Okay: Moves the robot back to the starting position
+The operator can send the instruction to the controller by pressing the space bar on the computer that runs the gesture detection software when they are happy with the prediction result that is shown live in the camera feed.
+This video will show an example how to operate the robot:
+https://www.youtube.com/watch?v=KaUxFlxdOPg
+
